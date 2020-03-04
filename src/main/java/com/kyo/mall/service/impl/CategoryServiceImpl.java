@@ -49,6 +49,25 @@ public class CategoryServiceImpl implements ICategoryService {
 
     }
 
+    @Override
+    public void findSubCategoryId(Integer id, Set<Integer> resultSet) {
+        //首先获取全部数据
+        List<Category> categories = categoryMapper.selectAll();
+        findSubCategoryId(id,resultSet,categories);
+    }
+
+    private void findSubCategoryId(Integer id, Set<Integer> resultSet, List<Category> categories) {
+
+        for(Category category :categories){
+            if(category.getParentId().equals(id)){
+                //判断数据中父id等于给定参数id的值并将其id加入到resultSet当中
+                resultSet.add(category.getId());
+                //继续向下查询
+                findSubCategoryId(category.getId(),resultSet,categories);
+            }
+        }
+    }
+
     //子数据查询
     //传入id, 和上一次查询数据
 
