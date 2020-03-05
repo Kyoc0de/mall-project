@@ -7,6 +7,7 @@ import com.kyo.mall.vo.CategoryVo;
 import com.kyo.mall.vo.ResponseVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ public class CategoryServiceImpl implements ICategoryService {
 
     @Autowired
     private CategoryMapper categoryMapper;
+
+
 
     @Override
     public ResponseVo<List<CategoryVo>> selectAll() {

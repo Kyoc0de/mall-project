@@ -26,12 +26,9 @@ public class UserController {
     private IUserService userService;
 
     @PostMapping("/user/register")
-    public ResponseVo register(@Valid @RequestBody UserRegisterForm userRegisterForm,
-                               BindingResult bindingResult){
+    public ResponseVo register(@Valid @RequestBody UserRegisterForm userRegisterForm){
 
-        if(bindingResult.hasErrors()){
-            return ResponseVo.error(ResponseEnum.PARAM_ERROR,bindingResult);
-        }
+
         User user = new User();
         BeanUtils.copyProperties(userRegisterForm,user);
         return userService.register(user);
