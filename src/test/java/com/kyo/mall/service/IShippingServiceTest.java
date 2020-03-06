@@ -6,6 +6,7 @@ import com.kyo.mall.form.ShippingForm;
 import com.kyo.mall.pojo.Shipping;
 import com.kyo.mall.vo.ResponseVo;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +18,6 @@ import static org.junit.Assert.*;
 
 @Slf4j
 public class IShippingServiceTest extends MallApplicationTests {
-
     @Autowired
     private IShippingService shippingService;
 
@@ -25,8 +25,7 @@ public class IShippingServiceTest extends MallApplicationTests {
 
     private ShippingForm form;
 
-    private Integer shippingId = 8;
-
+    private Integer shippingId;
 
     @Before
     public void before() {
@@ -40,16 +39,18 @@ public class IShippingServiceTest extends MallApplicationTests {
         form.setReceiverDistrict("海淀区");
         form.setReceiverZip("000000");
         this.form = form;
+
+        add();
     }
 
-    @Test
     public void add() {
         ResponseVo<Map<String, Integer>> responseVo = shippingService.add(uid, form);
         log.info("result={}", responseVo);
+        this.shippingId = responseVo.getData().get("shippingId");
         Assert.assertEquals(ResponseEnum.SUCCESS.getCode(), responseVo.getStatus());
     }
 
-    @Test
+    @After
     public void delete() {
         ResponseVo responseVo = shippingService.delete(uid, shippingId);
         log.info("result={}", responseVo);
@@ -66,5 +67,8 @@ public class IShippingServiceTest extends MallApplicationTests {
 
     @Test
     public void list() {
+        ResponseVo responseVo = shippingService.list(uid, 1, 10);
+        log.info("result={}", responseVo);
+        Assert.assertEquals(ResponseEnum.SUCCESS.getCode(), responseVo.getStatus());
     }
 }
