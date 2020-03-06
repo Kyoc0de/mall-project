@@ -9,6 +9,7 @@ import com.kyo.mall.service.IShippingService;
 import com.kyo.mall.vo.ResponseVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -38,12 +39,26 @@ public class ShippingServiceImpl implements IShippingService {
 
     @Override
     public ResponseVo delete(Integer uid, Integer shippingId) {
-        return null;
+        int row = shippingMapper.deleteByIdAndUid(shippingId, uid);
+        if(row == 0){
+            return ResponseVo.error(ResponseEnum.DELETE_SHIPPING_FAIL);
+        }
+        return ResponseVo.success();
     }
 
     @Override
     public ResponseVo update(Integer uid, Integer shippingId, ShippingForm form) {
-        return null;
+
+        Shipping shipping = new Shipping();
+        BeanUtils.copyProperties(form,shipping);
+        shipping.setUserId(uid);
+        shipping.setId(shippingId);
+        int row = shippingMapper.updateByPrimaryKeySelective(shipping);
+        if(row == 0){
+            return ResponseVo.error(ResponseEnum.ERROR);
+        }
+        return ResponseVo.success();
+
     }
 
     @Override
