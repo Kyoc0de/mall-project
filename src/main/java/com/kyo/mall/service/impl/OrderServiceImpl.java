@@ -3,8 +3,10 @@ package com.kyo.mall.service.impl;
 import com.kyo.mall.dao.OrderMapper;
 import com.kyo.mall.dao.ProductMapper;
 import com.kyo.mall.dao.ShippingMapper;
+import com.kyo.mall.enums.ProductStatusEnum;
 import com.kyo.mall.enums.ResponseEnum;
 import com.kyo.mall.pojo.Cart;
+import com.kyo.mall.pojo.OrderItem;
 import com.kyo.mall.pojo.Product;
 import com.kyo.mall.pojo.Shipping;
 import com.kyo.mall.service.ICartService;
@@ -16,8 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -68,10 +72,19 @@ public class OrderServiceImpl implements IOrderService {
             if(product == null){
                 return ResponseVo.error(ResponseEnum.PRODUCT_NOT_EXIST,"商品不存在, productId = "+cart.getProductId());
             }
+            //是否商品下架
+            if(ProductStatusEnum.ON_SALE.getCode().equals(product.getStatus())){
+                return ResponseVo.error(ResponseEnum.PRODUCT_OFF_SALE_OR_DELETE,"商品不是在售状态 "+ product.getName());
+            }
+
             //库存是否充足
             if(product.getStock()<cart.getQuantity()){
                 return ResponseVo.error(ResponseEnum.PRODUCT_STOCK_ERROR,"库存不正确: "+product.getName());
             }
+
+            Long orderNo = generateOrderNo();
+            OrderItem orderItem = buildOrderItem(uid, orderNo, cart.getQuantity(), product);
+
         }
         //计算价格total,只计算选中
 
@@ -86,5 +99,23 @@ public class OrderServiceImpl implements IOrderService {
 
 
         return null;
+    }
+
+    private Long generateOrderNo() {
+        //企业级分布式唯一id -> 有待学习
+        return System.currentTimeMillis() + new Random().nextInt(999);
+    }
+
+    private OrderItem buildOrderItem(Integer uid, Long orderNo, Integer quantity, Product product) {
+        OrderItem item = new OrderItem();
+        item.setUserId(uid);
+        item.setOrderNo(orderNo);
+        item.setProductId(product.getId());
+        item.setProductName(product.getName());
+        item.setProductImage(product.getMainImage());
+        item.setCurrentUnitPrice(product.getPrice());
+        item.setQuantity(quantity);
+        item.setTotalPrice(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
+        return item;
     }
 }
