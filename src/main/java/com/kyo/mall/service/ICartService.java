@@ -2,8 +2,11 @@ package com.kyo.mall.service;
 
 import com.kyo.mall.form.CartAddForm;
 import com.kyo.mall.form.CartUpdateForm;
+import com.kyo.mall.pojo.Cart;
 import com.kyo.mall.vo.CartVo;
 import com.kyo.mall.vo.ResponseVo;
+
+import java.util.List;
 
 public interface ICartService {
 
@@ -20,4 +23,6 @@ public interface ICartService {
     ResponseVo<CartVo> unSelectAll(Integer uid);
 
     ResponseVo<Integer> sum(Integer uid);
+
+    List<Cart> listForCart(Integer uid);
 }
